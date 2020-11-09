@@ -1,0 +1,39 @@
+---
+version: "2"
+services:
+  mariadb:
+    image: linuxserver/mariadb
+    container_name: mariadb
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - MYSQL_ROOT_PASSWORD=mariadbpassword
+      - TZ=Europe/London
+      - MYSQL_DATABASE=WP_database
+      - MYSQL_USER=WP_dbuser
+      - MYSQL_PASSWORD=WP_dbpassword
+    volumes:
+      - /home/aptalca/appdata/mariadb:/config
+    restart: unless-stopped
+  swag:
+    image: linuxserver/swag
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - URL=linuxserver-test.com
+      - SUBDOMAINS=wildcard
+      - VALIDATION=dns
+      - DNSPLUGIN=cloudflare
+    volumes:
+      - /home/aptalca/appdata/swag:/config
+    ports:
+      - 443:443
+      - 80:80
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+    
